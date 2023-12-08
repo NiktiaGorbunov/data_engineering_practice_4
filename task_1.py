@@ -1,12 +1,12 @@
 import msgpack
 import sqlite3
-import menu
 import json
 
 def whrite_json(items: list, path_name: str):
     json_items = json.dumps(items, ensure_ascii=False)
     with open(path_name, 'w', encoding='utf-8') as f:
         f.write(json_items)
+
 def parse_data(file_name):
     with open(file_name, "rb") as data_file:
         byte_data = data_file.read()
@@ -21,14 +21,14 @@ def connect_to_db(file_name):
 
 def create_table(db):
     cursor = db.cursor()
-    cursor.execute("CREATE TABLE book (title, author, genre, pages, published_year, isbn, rating, views)")
+    cursor.execute("CREATE TABLE book (id INTEGER PRIMARY KEY AUTOINCREMENT, title, author, genre, pages, published_year, isbn, rating, views)")
     db.commit()
 
 def insert_data(db, data):
     cursor = db.cursor()
 
     cursor.executemany("""
-        INSERT INTO book (title, author, genre, pages, published_year, isbn, rating, views)
+        INSERT or REPLACE INTO book (title, author, genre, pages, published_year, isbn, rating, views)
         VALUES (:title, :author, :genre, :pages, :published_year, :isbn, :rating, :views)
     """, data)
     db.commit()
@@ -49,7 +49,7 @@ def get_stat_by_pages(db):
         SELECT 
             SUM(pages) as sum,
             AVG(pages) as avg,
-            MIN(pages) as min,
+            MIN(pages) as min,  
             MAX(pages) as max
         FROM book
     """)
@@ -84,7 +84,7 @@ def get_filter_by_year(db, min_year, limit=10):
     """, [min_year, limit])
 
     items = list()
-    for row in res:
+    for row in res.fetchall():
         items.append(dict(row))
 
     cursor.close()
