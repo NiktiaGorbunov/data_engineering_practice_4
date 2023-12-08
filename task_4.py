@@ -44,9 +44,6 @@ def connect_to_db(file_name):
     return connection
 
 
-
-{'name': 'Intel Core i5', 'price': 66989, 'quantity': 33, 'fromCity': 'Луго', 'isAvailable': True, 'views': 28918}
-
 def create_table(db):
     cursor = db.cursor()
     cursor.execute("CREATE TABLE products (id INTEGER PRIMARY KEY AUTOINCREMENT, name, price, quantity, fromCity, isAvailable, views, count_update DEFAULT 0)")
@@ -170,7 +167,6 @@ def main():
 
     # обновление данных
     # handle_update(db, update)
-
 
     top_by_update = get_top_by_update(db)
     whrite_json(top_by_update, 'answers/task_4_top.json')
